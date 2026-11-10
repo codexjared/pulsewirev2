@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pulsewise (all frames): AI Health Monitoring Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9F0EE;--surf:#fff;--ink:#12292C;--mut:#5E7376;--line:#DCE6E3;--teal:#0E8A86;--tealbg:#DDF1EE;--heart:#D9353A;--heartbg:#FCE6E6;--sleep:#5B57D1;--sleepbg:#E8E7FA;--hd:'Bricolage Grotesque','Segoe UI',sans-serif;--bd:'Figtree','Segoe UI',sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0A1415;--surf:#142628;--ink:#E7F1EF;--mut:#8FA7A6;--line:#233B3D;--teal:#3CC4BE;--tealbg:#123A3A;--heart:#FF6B6F;--heartbg:#3A1A1D;--sleep:#8C89FF;--sleepbg:#25234F}}
+:root[data-theme=dark]{--bg:#0A1415;--surf:#142628;--ink:#E7F1EF;--mut:#8FA7A6;--line:#233B3D;--teal:#3CC4BE;--tealbg:#123A3A;--heart:#FF6B6F;--heartbg:#3A1A1D;--sleep:#8C89FF;--sleepbg:#25234F}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--bd)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.wrap{display:flex;gap:36px;justify-content:center;align-items:flex-start;padding:28px 20px}
+aside{width:210px;position:sticky;top:20px}
+aside h1{font:700 22px var(--hd);margin:0 0 4px}
+aside p{margin:0 0 16px;color:var(--mut);font-size:13px}
+aside button{display:block;width:100%;text-align:left;padding:8px 12px;border-radius:10px;color:var(--mut);font-weight:500}
+aside button.on{background:var(--surf);color:var(--ink);box-shadow:inset 3px 0 0 var(--teal)}
+.phone{width:390px;height:800px;max-height:calc(100svh - 56px);background:var(--surf);border:1px solid var(--line);border-radius:36px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(10,30,30,.18)}
+#scr{flex:1;overflow:auto;padding:22px 18px 14px}
+nav{display:flex;border-top:1px solid var(--line);padding:6px 6px 10px}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mut);padding:6px 0;border-radius:12px}
+nav button.on{color:var(--teal);font-weight:600}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h2{font:700 26px/1.15 var(--hd);margin:0 0 4px}
+h3{font:600 17px var(--hd);margin:0 0 8px}
+.mut{color:var(--mut);font-size:13px}
+.card{background:var(--bg);border-radius:20px;padding:16px;margin:12px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font:700 52px/1 var(--hd)}
+.btn{display:block;width:100%;background:var(--teal);color:#fff;font-weight:600;padding:14px;border-radius:16px;margin-top:14px;text-align:center}
+:root:not([data-theme=light]) .btn{color:#06201f}
+.btn.ghost{background:var(--tealbg);color:var(--teal)}
+.chip{padding:8px 14px;border-radius:999px;background:var(--bg);font-weight:500;margin:0 6px 8px 0;display:inline-block}
+.chip.on{background:var(--teal);color:#fff}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--tealbg);color:var(--teal)}
+.hr{background:var(--heartbg)}.sl{background:var(--sleepbg)}
+.ek{width:100%;height:60px}
+.ek path{fill:none;stroke:var(--heart);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:420;animation:dr 2.4s linear infinite}
+@keyframes dr{from{stroke-dashoffset:420}to{stroke-dashoffset:-420}}
+@media(prefers-reduced-motion:reduce){.ek path{animation:none}}
+.bar{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:10px 0}
+.ring{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--sleep) var(--p),var(--line) 0)}
+.ring div{width:94px;height:94px;border-radius:50%;background:var(--surf);display:grid;place-items:center;text-align:center}
+.tog{width:46px;height:26px;border-radius:13px;background:var(--line);position:relative;flex:none}
+.tog:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.tog.on{background:var(--teal)}.tog.on:after{left:23px}
+.msg{padding:10px 14px;border-radius:16px;margin:8px 0;max-width:88%}
+.msg.ai{background:var(--tealbg)}.msg.me{background:var(--bg);margin-left:auto}
+.dr{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;border:1.5px solid var(--line);margin-bottom:8px;width:100%;text-align:left}
+.dr.on{border-color:var(--teal);background:var(--tealbg)}
+.av{width:42px;height:42px;border-radius:50%;background:var(--sleepbg);color:var(--sleep);display:grid;place-items:center;font-weight:700;flex:none}
+.back{color:var(--mut);margin-bottom:10px;font-weight:500}
+.center{text-align:center}.fld{width:100%;padding:13px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}.fld:focus{outline:2px solid var(--teal);border-color:var(--teal)}.lnk{color:var(--teal);font-weight:600}.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:13px;margin:18px 0 4px}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+@media(max-width:900px){.wrap{flex-direction:column;align-items:center;gap:16px}aside{width:100%;position:static}aside p{display:none}.fl{display:flex;overflow-x:auto;gap:6px}aside button{width:auto;white-space:nowrap}}
+@media(max-width:520px){.wrap{padding:0}.phone{width:100%;border-radius:0;border:0;max-height:none;height:calc(100svh - 120px)}}
+#board{display:flex;gap:40px;padding:40px;width:max-content;align-items:flex-start}.fr{flex:none}.fr small{display:block;margin-bottom:10px;font:600 16px var(--hd);color:var(--mut)}#board .phone{width:390px!important;height:844px!important;max-height:none!important;border-radius:36px!important;box-shadow:none}.scr{flex:1;overflow:hidden;padding:22px 18px 14px}</style></head><body>
+<div id="board"></div>
+<script>
+const $=s=>document.querySelector(s);
+const P={home:'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',heart:'M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',cal:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',ai:'M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z'};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${P[n]}"/></svg>`;
+const ek='<svg class="ek" viewBox="0 0 400 60"><path d="M0 34h70l8-8 8 8h30l8-26 10 46 10-20h40l8-8 8 8h60l8-26 10 46 10-20h60"/></svg>';
+const line=(d,c,w=330,h=110)=>{const mx=Math.max(...d),mn=Math.min(...d),s=w/(d.length-1);const p=d.map((v,i)=>`${i?'L':'M'}${(i*s).toFixed(1)} ${(h-8-(v-mn)/(mx-mn)*(h-16)).toFixed(1)}`).join('');return `<svg viewBox="0 0 ${w} ${h}" width="100%"><path d="${p}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>`};
+const docs=[{n:'Dr. Maria Santos',s:'Cardiologist',i:'MS'},{n:'Dr. Paolo Reyes',s:'Sleep specialist',i:'PR'},{n:'Dr. Ana Villanueva',s:'General practice',i:'AV'}];
+const days=['Wed, Nov 11','Thu, Nov 12','Fri, Nov 13','Mon, Nov 16'],times=['9:00 AM','10:30 AM','1:00 PM','3:30 PM'];
+const st={doc:0,day:1,time:1,appts:[{d:'Dr. Maria Santos',s:'Cardiologist',w:'Thu, Nov 12, 9:30 AM'}],chat:[{ai:1,t:'Hi Alex, I’ve reviewed your last 7 days. Ask me anything about your heart, sleep or appointments.'}],bpm:72};
+const toggle=(l,on)=>`<div class="row" style="padding:10px 0"><span>${l}</span><button class="tog ${on?'on':''}" data-tog aria-label="${l}"></button></div>`;
+const fld=(l,t,p)=>`<label class="mut" style="display:block;margin:14px 0 6px">${l}</label><input class="fld" type="${t}" placeholder="${p}">`;const back=t=>`<button class="back" data-go="${t}">‹ Back</button>`;
+const S={
+splash:{n:'Welcome',nav:0,h:()=>`<div class="center" style="padding-top:70px"><div class="av" style="width:84px;height:84px;margin:0 auto 22px;background:var(--heartbg);color:var(--heart)"><svg class="i" style="width:44px;height:44px" viewBox="0 0 24 24"><path d="${P.heart}"/></svg></div><h2>Pulsewise</h2><p class="mut" style="margin:8px 24px 30px">Your heart, sleep and doctor visits in one place, read by an AI that explains what the numbers mean.</p>${ek}<button class="btn" data-go="signup" style="margin-top:50px">Get started</button><button class="back" data-go="login" style="margin-top:14px">I already have an account</button></div>`},
+signup:{n:'Sign up',nav:0,h:()=>`${back('splash')}<h2>Create your account</h2><p class="mut">Set up Pulsewise in under a minute.</p>${fld('Full name','text','Alex Lim')}${fld('Email','email','alex@email.com')}${fld('Password','password','At least 8 characters')}<div class="row" style="padding:16px 0 0"><span class="mut" style="flex:1">I agree to the Terms and Privacy Policy</span><button class="tog on" data-tog aria-label="Agree to terms"></button></div><button class="btn" data-go="connect">Create account</button><div class="or">or</div><button class="btn ghost" data-go="connect">Continue with Google</button><p class="center mut" style="margin-top:18px">Already have an account? <button class="lnk" data-go="login">Log in</button></p>`},
+login:{n:'Log in',nav:0,h:()=>`${back('splash')}<div class="av" style="width:56px;height:56px;margin-bottom:16px;background:var(--heartbg);color:var(--heart)"><svg class="i" viewBox="0 0 24 24"><path d="${P.heart}"/></svg></div><h2>Welcome back</h2><p class="mut">Log in to see today’s heart and sleep summary.</p>${fld('Email','email','alex@email.com')}${fld('Password','password','Your password')}<div style="text-align:right;margin-top:10px"><button class="lnk">Forgot password?</button></div><button class="btn" data-go="home">Log in</button><div class="or">or</div><button class="btn ghost" data-go="home">Continue with Google</button><button class="btn ghost" data-go="home">Use Face ID</button><p class="center mut" style="margin-top:18px">New here? <button class="lnk" data-go="signup">Sign up</button></p>`},
+connect:{n:'Pair wristband',nav:0,h:()=>`${back('splash')}<h2>Pair your Pulse Band</h2><p class="mut">Hold the band close to your phone. We’ll find it automatically.</p><div class="card center" style="padding:30px"><div class="ring" style="--p:100%;margin:0 auto 14px;background:conic-gradient(var(--teal) 100%,var(--line) 0)"><div><b>Pulse Band 2</b><span class="mut">Found</span></div></div><span class="pill">Battery 86%</span></div><h3>Allow access to</h3>${toggle('Heart rate and HRV',1)}${toggle('Sleep stages',1)}${toggle('Share summaries with my doctor',0)}<button class="btn" data-go="home">Pair and continue</button>`},
+home:{n:'Home dashboard',nav:'home',h:()=>`<div class="row"><div><span class="mut">Tuesday, Nov 10</span><h2>Good morning, Alex</h2></div><button class="av" data-go="profile" aria-label="Profile">AL</button></div>
+<div class="card hr" data-go="heart" style="cursor:pointer"><div class="row"><span class="mut">Heart rate now</span><span class="pill" style="background:var(--surf);color:var(--heart)">Normal</span></div><div class="row" style="align-items:flex-end"><div class="big"><span class="bpm">${st.bpm}</span> <span class="mut" style="font-size:16px;font-weight:500">bpm</span></div><div style="width:55%">${ek}</div></div></div>
+<div class="grid"><div class="card sl" data-go="sleep" style="margin:0;cursor:pointer"><span class="mut">Last night</span><div class="big" style="font-size:34px;margin:6px 0">7h 12m</div><span class="pill" style="background:var(--surf);color:var(--sleep)">Score 84</span></div><div class="card" data-go="appts" style="margin:0;cursor:pointer"><span class="mut">Next visit</span><div style="font:600 17px var(--hd);margin:6px 0">${st.appts[0].d.replace('Dr. ','Dr. ')}</div><span class="mut">${st.appts[0].w}</span></div></div>
+<div class="card" data-go="ai" style="cursor:pointer;background:var(--tealbg)"><b style="color:var(--teal)">AI insight</b><p style="margin:6px 0 0">Your resting heart rate dropped 3 bpm this week. Your 11 pm bedtime is working. Keep it up.</p></div>
+<div class="grid"><div class="card" style="margin:0"><span class="mut">Steps</span><h3 style="margin:4px 0 0">6,420</h3></div><div class="card" style="margin:0"><span class="mut">Blood oxygen</span><h3 style="margin:4px 0 0">98%</h3></div><div class="card" style="margin:0"><span class="mut">Stress</span><h3 style="margin:4px 0 0">Low</h3></div><div class="card" style="margin:0"><span class="mut">HRV</span><h3 style="margin:4px 0 0">52 ms</h3></div></div>`},
+heart:{n:'Heart rate',nav:'heart',h:()=>`<h2>Heart rate</h2><span class="mut">Live from your Pulse Band</span><div class="card hr center"><div class="big" style="color:var(--heart)"><span class="bpm">${st.bpm}</span></div><span class="mut">beats per minute, resting</span>${ek}</div>
+<div class="card"><div class="row"><h3 style="margin:0">Today</h3><span class="pill">24 hours</span></div>${line([58,57,56,55,56,60,68,74,80,76,72,70,74,78,84,96,88,80,76,72,70,68,66,64],'var(--heart)')}<div class="row mut"><span>12 am</span><span>12 pm</span><span>Now</span></div></div>
+<div class="grid"><div class="card" style="margin:0"><span class="mut">Resting</span><h3>58 bpm</h3></div><div class="card" style="margin:0"><span class="mut">Average</span><h3>72 bpm</h3></div><div class="card" style="margin:0"><span class="mut">Highest</span><h3>128 bpm</h3></div><div class="card" style="margin:0"><span class="mut">Alert above</span><h3>120 bpm</h3></div></div>
+<button class="btn ghost" data-go="alert">Preview high heart rate alert</button>`},
+sleep:{n:'Sleep tracking',nav:'sleep',h:()=>`<h2>Sleep</h2><span class="mut">Mon, Nov 9 to Tue, Nov 10</span><div class="card sl row"><div class="ring" style="--p:84%"><div><b style="font:700 30px var(--hd)">84</b><span class="mut">Good</span></div></div><div style="flex:1;padding-left:8px"><div class="big" style="font-size:30px">7h 12m</div><span class="mut">Bed 11:04 pm<br>Wake 6:16 am</span></div></div>
+<div class="card"><h3>Sleep stages</h3><div class="bar"><i style="flex:5;background:#E8A33D"></i><i style="flex:22;background:var(--sleep);opacity:.55"></i><i style="flex:48;background:var(--teal);opacity:.6"></i><i style="flex:25;background:var(--sleep)"></i></div><div class="grid mut"><span>Awake 22 min</span><span>REM 1h 35m</span><span>Light 3h 28m</span><span>Deep 1h 47m</span></div></div>
+<div class="card"><h3>This week</h3>${line([6.4,7.1,5.9,7.5,6.8,7.2,7.2],'var(--sleep)')}<div class="row mut"><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span></div></div>
+<div class="card" style="background:var(--tealbg)"><b style="color:var(--teal)">AI tip</b><p style="margin:6px 0 0">Friday was your shortest night. Sleep specialists can help if this repeats.</p><button class="btn ghost" style="background:var(--surf)" data-go="book">Book a sleep specialist</button></div>`},
+appts:{n:'Appointments',nav:'appts',h:()=>`<h2>Appointments</h2><span class="mut">${st.appts.length} upcoming</span>${st.appts.map(a=>`<div class="card row"><div class="av">${a.d.split(' ').slice(1).map(x=>x[0]).join('').slice(0,2)}</div><div style="flex:1"><b>${a.d}</b><div class="mut">${a.s}</div><div style="color:var(--teal);font-weight:600">${a.w}</div></div></div>`).join('')}<button class="btn" data-go="book">Book appointment</button><h3 style="margin-top:22px">Past visits</h3><div class="card row"><div><b>Dr. Ana Villanueva</b><div class="mut">Annual check-up, Aug 3</div></div><span class="pill">Report ready</span></div>`},
+book:{n:'Book appointment',nav:'appts',h:()=>`${back('appts')}<h2>Book appointment</h2><span class="mut">Your last 7 days of data will be shared with the doctor.</span><h3 style="margin-top:16px">Choose a doctor</h3>${docs.map((d,i)=>`<button class="dr ${st.doc==i?'on':''}" data-doc="${i}"><span class="av">${d.i}</span><span><b>${d.n}</b><br><span class="mut">${d.s}</span></span></button>`).join('')}<h3 style="margin-top:14px">Date</h3>${days.map((d,i)=>`<button class="chip ${st.day==i?'on':''}" data-day="${i}">${d}</button>`).join('')}<h3>Time</h3>${times.map((t,i)=>`<button class="chip ${st.time==i?'on':''}" data-time="${i}">${t}</button>`).join('')}<button class="btn" data-act="confirm">Confirm booking</button>`},
+done:{n:'Booking confirmed',nav:'appts',h:()=>{const a=st.appts[st.appts.length-1];return `<div class="center" style="padding-top:50px"><div class="av" style="width:80px;height:80px;margin:0 auto 18px;background:var(--tealbg);color:var(--teal);font-size:34px">✓</div><h2>Booking confirmed</h2><p class="mut">We’ll remind you the day before.</p><div class="card" style="text-align:left"><b>${a.d}</b><div class="mut">${a.s}</div><div style="color:var(--teal);font-weight:600;margin-top:6px">${a.w}</div></div><button class="btn" data-go="appts">View appointments</button><button class="btn ghost" data-go="home">Back to home</button></div>`}},
+ai:{n:'AI assistant',nav:'ai',h:()=>`<h2>Ask Pulsewise</h2><span class="mut">Answers based on your own data. Not a diagnosis.</span><div style="margin:12px 0">${st.chat.map(m=>`<div class="msg ${m.ai?'ai':'me'}">${m.t}</div>`).join('')}</div><div>${[['How was my sleep?','Your score was 84. You had 1h 47m of deep sleep, which is above your average. Friday was the short night at 5h 54m.'],['Is my heart rate normal?','Yes. Your resting rate of 58 bpm is healthy for your age and is trending down 3 bpm this week.'],['Should I see a doctor?','Nothing urgent. A routine check-up is due, and you already have one on Thu, Nov 12.']].map(q=>`<button class="chip" data-q="${q[0]}|${q[1]}">${q[0]}</button>`).join('')}</div>`},
+alert:{n:'Heart rate alert',nav:0,h:()=>`<div class="center" style="padding-top:40px"><div class="av" style="width:90px;height:90px;margin:0 auto 18px;background:var(--heartbg);color:var(--heart);font-size:36px">!</div><h2 style="color:var(--heart)">High heart rate</h2><div class="big" style="margin:14px 0;color:var(--heart)">138 <span class="mut" style="font-size:18px">bpm</span></div><p class="mut">Your heart rate has stayed above 120 bpm for 10 minutes while you’re resting. Sit down and breathe slowly.</p><div class="card hr">${ek}</div><button class="btn" style="background:var(--heart);color:#fff" data-go="book">Call or book a doctor</button><button class="btn ghost" data-go="heart">I’m okay, dismiss</button></div>`},
+profile:{n:'Profile and settings',nav:0,h:()=>`${back('home')}<div class="row" style="justify-content:flex-start"><div class="av" style="width:64px;height:64px;font-size:22px">AL</div><div><h2 style="font-size:22px">Alex Lim</h2><span class="mut">Age 24, 168 cm, 61 kg</span></div></div><div class="card row"><div><b>Pulse Band 2</b><div class="mut">Connected, 86% battery</div></div><span class="pill">Synced</span></div><h3>Alerts</h3>${toggle('High heart rate alerts',1)}${toggle('Bedtime reminder, 10:30 pm',1)}${toggle('Weekly AI health summary',1)}<h3 style="margin-top:12px">Privacy</h3>${toggle('Share data with my doctor',0)}${toggle('Use data to improve AI',0)}<button class="btn ghost" data-go="login">Sign out</button>`}};
+const tabs=[['home','Home'],['heart','Heart'],['sleep','Sleep'],['appts','Visits'],['ai','Ask AI']];
+let cur='splash';
+function render(){$('#board').innerHTML=Object.keys(S).map(k=>{const s=S[k];return `<div class="fr" id="f-${k}"><small>${s.n}</small><div class="phone"><div class="scr">${s.h()}</div><nav>${tabs.map(t=>`<button data-go="${t[0]}" class="${s.nav==t[0]?'on':''}">${ic(t[0]=='appts'?'cal':t[0]=='ai'?'ai':t[0]=='sleep'?'moon':t[0])}${t[1]}</button>`).join('')}</nav></div></div>`}).join('')}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-go],[data-doc],[data-day],[data-time],[data-act],[data-q],[data-tog]');if(!t)return;const d=t.dataset;
+if('tog'in d){t.classList.toggle('on');return}
+if(d.go){document.getElementById('f-'+d.go).scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});return}else if('doc'in d){st.doc=+d.doc}else if('day'in d){st.day=+d.day}else if('time'in d){st.time=+d.time}
+else if(d.act=='confirm'){st.appts.push({d:docs[st.doc].n,s:docs[st.doc].s,w:days[st.day]+', '+times[st.time]});cur='done'}
+else if(d.q){const[q,a]=d.q.split('|');st.chat.push({t:q},{ai:1,t:a})}
+render()});
+setInterval(()=>{st.bpm=70+Math.round(Math.random()*5);document.querySelectorAll('.bpm').forEach(n=>n.textContent=st.bpm)},1500);
+render();
+</script></body></html>
